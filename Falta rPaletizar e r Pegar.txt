@@ -1,0 +1,239 @@
+MODULE MainModule
+CONST robtarget pStart:=[[379.34,56.34,626.93],[0.0852957,-0.0430183,0.995065,-0.0268117],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+CONST robtarget p10:=[[379.38,301.98,409.61],[0.0852946,-0.0430193,0.995065,-0.0268169],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+CONST robtarget p20:=[[379.38,-309.70,113.52],[0.0852947,-0.0430193,0.995065,-0.0268177],[-1,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+   VAR num X := 0;
+   VAR num Y := 0;
+   VAR num Z := 0;
+   VAR num A := 0;
+   VAR num Contador := 0;
+   VAR num ContadorAM := 0;
+   VAR num ContadorVM := 0;
+   VAR num ContadorAZ := 0;
+   VAR num ContadorVD := 0;
+   VAR num Amarelo := 0;
+   VAR num Azul := 0;
+   VAR num Verde := 0;
+   VAR num Vermelho := 0;
+PROC main()
+
+   rVerificar;
+    IF ContadorAM + ContadorVM + ContadorAZ + ContadorVD = 24 THEN
+       TPWrite "Processo concluído!"; 
+       WaitTime 1;
+       TPWrite "Retire todas as peças!"; 
+       WaitTime 1;
+       TPReadFK reg1, "Reiniciar processo?", stEmpty, "Sim", stEmpty, "Não", stEmpty;
+       IF reg1 = 2 THEN X:=0; Y:=0; Z:=0; ContadorVD := 0; ContadorAZ := 0; ContadorVM := 0; ContadorAM := 0; ENDIF 
+       IF reg1 = 4 THEN Movel pStart, v1000, fine, tool0; ENDIF 
+    ENDIF 
+   rPegar;    
+   rSelecionar;
+   
+   ENDPROC
+      PROC rVerificar()
+       IF DI10_1 = 0 AND DI10_3 = 0 THEN
+        Incr ContadorAM;
+        Amarelo := 1;
+        Vermelho := 0;
+        Azul := 0;
+        Verde := 0;
+       ENDIF
+       IF DI10_1 = 0 AND DI10_3 = 1 THEN
+        INCR ContadorAZ;
+        Amarelo := 0;
+        Vermelho := 0;
+        Azul := 1;
+        Verde := 0;
+       ENDIF
+       IF DI10_1 = 1 AND DI10_3 = 0 THEN
+        Incr ContadorVD;
+        Amarelo := 0;
+        Vermelho := 0;
+        Azul := 0;
+        Verde := 1;
+       ENDIF
+       IF DI10_1 = 1 AND DI10_3 = 1 THEN
+        Incr ContadorVM;
+        Amarelo := 0;
+        Vermelho := 1;
+        Azul := 0;
+        Verde := 0;
+       ENDIF
+      ENDPROC
+      
+   PROC rSelecionar()   
+IF Amarelo = 1 THEN   
+   TEST ContadorAM
+
+   CASE 1:
+   rPaletizar;
+   
+
+   CASE 2:
+   X := 0;
+   Y := 80;
+   rPaletizar;
+  
+   CASE 3:
+   X := 80;
+   Y := 0;
+   rPaletizar;
+ 
+   
+   CASE 4:
+   X := 80;
+   Y := 80;
+   rPaletizar;
+   
+   CASE 5:
+   X := 160;
+   Y := 0;
+   rPaletizar;
+   
+
+   CASE 6:
+   X := 160;
+   Y := 80;
+   rPaletizar;
+
+   CASE 7:
+   MoveL pStart, v1000, fine, tool0;
+   TPWrite "Retire qualquer objeto da ferramenta aclopada";
+   WaitTime 1;
+   TPReadFK reg1, "Reiniciar processo?", stEmpty, "Sim", stEmpty, "Não", stEmpty;
+   
+   IF reg1 = 2 THEN X:=0; Y:=0; Z:=0; ContadorAM := 0; ENDIF 
+   IF reg1 = 4 THEN Movel pStart, v1000, fine, tool0; ENDIF 
+   
+ ENDTEST
+ENDIF
+IF Vermelho = 1 THEN 
+   TEST ContadoVM
+
+   CASE 1:
+   rPaletizar;
+   
+   CASE 2:
+   X := 0;
+   Y := 45;
+   rPaletizar;
+ 
+   
+   CASE 3:
+   X := 45;
+   Y := 0;
+   rPaletizar;
+ 
+   CASE 4:
+   X := 45;
+   Y := 45;
+   rPaletizar;
+   
+   CASE 5:
+   X := 90;
+   Y := 0;
+   rPaletizar;
+   
+   CASE 6:
+   X := 90;
+   Y := 45;
+   rPaletizar; 
+   
+   CASE 7:
+   MoveL pStart, v1000, fine, tool0;
+   TPWrite "Retire qualquer objeto da ferramenta aclopada";
+   WaitTime 1;
+   TPReadFK reg1, "Reiniciar processo?", stEmpty, "Sim", stEmpty, "Não", stEmpty;
+   
+   IF reg1 = 2 THEN X:=0; Y:=0; Z:=0; ContadorVM := 0; ENDIF 
+   IF reg1 = 4 THEN Movel pStart, v1000, fine, tool0; ENDIF 
+   
+   ENDTEST
+ENDIF
+IF Azul = 1 THEN 
+   TEST ContadorAZ
+
+   CASE 1:
+   rPaletizar;
+   
+   CASE 2:
+   X := 0;
+   Y := 45;
+   rPaletizar;
+   
+   CASE 3:
+   X := 45;
+   Y := 0;
+   rPaletizar;
+   
+   CASE 4:
+   X := 45;
+   Y := 45;
+   rPaletizar;
+   
+   CASE 5:
+   X := 90;
+   Y := 0;
+   rPaletizar;
+   
+   CASE 6:
+   X := 90;
+   Y := 45;
+   rPaletizar;
+   
+   CASE 7:
+   MoveL pStart, v1000, fine, tool0;
+   TPWrite "Retire qualquer objeto da ferramenta aclopada";
+   WaitTime 1;
+   TPReadFK reg1, "Reiniciar processo?", stEmpty, "Sim", stEmpty, "Não", stEmpty;
+   
+   IF reg1 = 2 THEN X:=0; Y:=0; Z:=0; ContadorAZ := 0; ENDIF 
+   IF reg1 = 4 THEN Movel pStart, v1000, fine, tool0; ENDIF 
+   
+   ENDTEST
+ENDIF
+IF Verde = 1 THEN 
+   TEST ContadorVD
+
+   CASE 1:
+   rPaletizar;
+   
+   CASE 2:
+   X := 0;
+   Y := 45;
+   rPaletizar;
+   
+   CASE 3:
+   X := 45;
+   Y := 0;
+   rPaletizar;
+   
+   CASE 4:
+   X := 45;
+   Y := 45;
+   rPaletizar;
+   
+   CASE 5:
+   X := 90;
+   Y := 0;
+   rPaletizar;
+   
+   CASE 6:
+   X := 90;
+   Y := 45;
+   rPaletizar;
+   
+   CASE 7:
+   MoveL pStart, v1000, fine, tool0;
+   TPWrite "Retire qualquer objeto da ferramenta aclopada";
+   WaitTime 1;
+   TPReadFK reg1, "Reiniciar processo?", stEmpty, "Sim", stEmpty, "Não", stEmpty;
+   
+   IF reg1 = 2 THEN X:=0; Y:=0; Z:=0; ContadorVD := 0; ENDIF 
+   IF reg1 = 4 THEN Movel pStart, v1000, fine, tool0; ENDIF 
+   ENDTEST
+ENDIF
+ENDPROC
+   
+   
